@@ -3,29 +3,7 @@ import xlsxwriter
 import glob, os
 import pandas as pd
 from datetime import datetime
-
-directory = r'C:\Users\Amanda Friedman\Dropbox\Tarifica\Data Collection Projects\Frontier Fixed Lines'
-
-data_columns = ['Date Collected', 'Country', 'Region', 'Operator', 'Plan Name', 'Plan Type', 'Consumer/SMB',
-                'Contract Length (Months)', 'Activation Fee', 'Installation Fee', 'Monthly Subscription Fee',
-                'Taxes (incl or excl)', 'Local Minutes Included', 'Nationwide Minutes Included',
-                'On-Network Minutes Included', 'Call Connection Fee (Per Call)',
-                'Local Peak Calling (Price Per Minute)',
-                'Local Off-Peak Calling (Price Per Minute)', 'National Peak Calling (Price Per Minute)',
-                'National Off-Peak Calling (Price Per Minute)', 'Mobile Peak Calling (Price Per Minute)',
-                'Mobile Off-Peak Calling (Price Per Minute)', 'On-Network Peak Calling (Price Per Minute)',
-                'On-Network Off-Peak Calling (Price Per Minute)', 'Other Calling Notes', 'Internet Connection Type',
-                'Internet Download Speed (MBPS)', 'Internet Upload Speed (MBPS)', 'Internet Data Allowance (GB)',
-                'Data Overage Charges', 'Internet Related Notes', 'Television Included (Yes/No)',
-                'Television Channels Description', 'Television Related Notes', 'Other Included Features',
-                'Equipment Included', 'General Notes']
-
-number_format_columns = ['Activation Fee', 'Installation Fee', 'Monthly Subscription Fee',
-                         'Call Connection Fee (Per Call)', 'Local Peak Calling (Price Per Minute)',
-                         'Local Off-Peak Calling (Price Per Minute)', 'National Peak Calling (Price Per Minute)',
-                         'National Off-Peak Calling (Price Per Minute)', 'Mobile Peak Calling (Price Per Minute)',
-                         'Mobile Off-Peak Calling (Price Per Minute)', 'On-Network Peak Calling (Price Per Minute)',
-                         'On-Network Off-Peak Calling (Price Per Minute)', 'Data Overage Charges']
+from Extra import directory, data_columns, number_format_columns
 
 df = pd.DataFrame()
 
