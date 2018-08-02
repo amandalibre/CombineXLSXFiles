@@ -1,15 +1,16 @@
 from xlrd import open_workbook
+import xlrd
 import xlsxwriter
 import glob, os
 import pandas as pd
 from datetime import datetime
-from Extra import directory, data_columns, number_format_columns
+from Extra import mobile_directory, mobile_data_columns, mobile_number_format_columns
 
 df = pd.DataFrame()
 
 frontier_dict = []
 
-os.chdir(directory)
+os.chdir(mobile_directory)
 for file in glob.glob("*.xlsx"):
 
     # open xlsx file
@@ -41,7 +42,7 @@ cell_format.set_border()
 cell_format.set_align('center')
 cell_format.set_align('vcenter')
 column_count = 0
-for column_header in data_columns:
+for column_header in mobile_data_columns:
     worksheet.write(0, column_count, column_header, cell_format)
     column_count += 1
 
@@ -55,21 +56,23 @@ date_format_errors = []
 # add promos
 for row_dict in frontier_dict:
     column_count = 0
+    # print(row_dict['Country Name'], " ", row_dict['Operator Name'])
     try:
         if str(row_dict['Date Collected']).find('-') == -1:
-            if row_dict['Country'] + ' ' + row_dict['Operator'] + ': Date Format Error' not in date_format_errors:
-                date_format_errors.append(row_dict['Country'] + ' ' + row_dict['Operator'] + ': Date Format Error')
+            if row_dict['Country Name'] + ' ' + row_dict['Operator Name'] + ': Date Format Error' not in date_format_errors:
+                date_format_errors.append(row_dict['Country Name'] + ' ' + row_dict['Operator Name'] + ': Date Format Error')
+                # print(row_dict)
     except KeyError:
         continue
-    for column in range(len(data_columns)):
+    for column in range(len(mobile_data_columns)):
         cell_format = workbook.add_format(
             {'bold': False, 'font_color': 'black', 'font_name': 'Calibri', 'font_size': 10})
         cell_format.set_text_wrap()
         cell_format.set_border()
         cell_format.set_align('center')
         cell_format.set_align('vcenter')
-        header_key = data_columns[column_count]
-        if header_key in number_format_columns:
+        header_key = mobile_data_columns[column_count]
+        if header_key in mobile_number_format_columns:
             cell_format.set_num_format('#,##0.00')
             try:
                 worksheet.write_number(row, column_count, float(row_dict[header_key]), cell_format)
@@ -78,14 +81,17 @@ for row_dict in frontier_dict:
                     worksheet.write(row, column_count, row_dict[header_key], cell_format)
                 except KeyError:
                     worksheet.write(row, column_count, '', cell_format)
-                    if row_dict['Country'] + ' ' + row_dict[
-                        'Operator'] + ': Key Error --> ' + header_key not in dict_key_errors:
+                    if row_dict['Country Name'] + ' ' + row_dict[
+                        'Operator Name'] + ': Cannot find column with title --> ' + header_key not in dict_key_errors:
                         dict_key_errors.append(
-                            row_dict['Country'] + ' ' + row_dict['Operator'] + ': Key Error --> ' + header_key)
-                        print(row_dict)
+                            row_dict['Country'] + ' ' + row_dict['Operator Name'] +
+                            ': Cannot find column with title --> ' + header_key)
         elif header_key == 'Date Collected':
             string_date = str(row_dict[header_key]).strip()
-            date_time = datetime.strptime(string_date, '%d-%m-%Y')
+            try:
+                date_time = datetime.strptime(string_date, '%d-%m-%Y')
+            except ValueError:
+                date_time = string_date
             cell_format.set_num_format('dd/mm/yyyy')
             worksheet.write(row, column_count, date_time, cell_format)
         else:
@@ -93,9 +99,10 @@ for row_dict in frontier_dict:
                 worksheet.write(row, column_count, row_dict[header_key], cell_format)
             except KeyError:
                 worksheet.write(row, column_count, '', cell_format)
-                if row_dict['Country'] + ' ' + row_dict['Operator'] + ': Key Error --> ' + header_key not in dict_key_errors:
-                    dict_key_errors.append(row_dict['Country'] + ' ' + row_dict['Operator'] + ': Key Error --> ' + header_key)
-                    print(row_dict)
+                if row_dict['Country Name'] + ' ' + row_dict['Operator Name'] + ': Cannot find column with title --> ' + header_key not in dict_key_errors:
+                    dict_key_errors.append(row_dict['Country Name'] + ' ' + row_dict['Operator Name'] +
+                                           ': Cannot find column with title --> ' + header_key)
+                    # print(row_dict)
         column_count += 1
     row += 1
 
